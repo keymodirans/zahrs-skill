@@ -1,20 +1,52 @@
 # zahrs-skill
 
-Indonesian workflow skills untuk AI coding agents. Dual entry points: Claude Plugin + MCP Server.
+Indonesian workflow skills untuk AI coding agents. 
+
+**Triple entry points:**
+- 🔧 **MCP Server** - 24 tools untuk Claude Desktop, Antigravity, Codex
+- 📝 **Claude Plugin** - Skills reference documents
+- ⚡ **Slash Commands** - 22 commands untuk Claude Code
 
 ## Features
 
-- **10 Orchestrator Tools**: debug, plan-phase, execute-phase, research, dll
-- **11 Index Agent Tools**: planner, debugger, executor, verifier, researcher, dll
-- **3 Meta-Tools**: list_skills, get_skill, search_skills
-- **Total: 24 MCP Tools**
+- **24 MCP Tools**: 10 orchestrators + 11 index agents + 3 meta-tools
+- **22 Slash Commands**: `/debug`, `/plan`, `/execute`, dll
 - **62 MD Files**: Complete skill documentation
 - **ToR Protocol**: Trace of Reasoning mandatory di setiap response
 - **Indonesian Informal**: Ngobrol santai tapi profesional
 
-## Installation (Personal Use)
+---
 
-### Claude Desktop
+## Installation
+
+### Option 1: Claude Code (Slash Commands)
+
+Copy folder ke project kamu:
+
+```bash
+# Copy slash commands ke project
+xcopy /E /I C:\Users\Rekabit\zahrs-skill\.agent .agent
+```
+
+Atau buka zahrs-skill folder langsung di Claude Code:
+
+```bash
+cd C:\Users\Rekabit\zahrs-skill
+claude .
+```
+
+**Available commands:**
+```
+/debug <bug>           - Investigate bugs
+/plan <phase>          - Create plans
+/execute <phase>       - Execute plans
+/research <topic>      - Deep research
+/roadmap <project>     - Create roadmap
+/skills                - List all skills
+... + 16 more commands
+```
+
+### Option 2: Claude Desktop (MCP Server)
 
 Add ke `%APPDATA%\Claude\claude_desktop_config.json`:
 
@@ -29,9 +61,9 @@ Add ke `%APPDATA%\Claude\claude_desktop_config.json`:
 }
 ```
 
-### Antigravity / Codex
+### Option 3: Antigravity / Gemini
 
-Add ke MCP config:
+Add ke `~/.gemini/antigravity/mcp_config.json`:
 
 ```json
 {
@@ -44,21 +76,64 @@ Add ke MCP config:
 }
 ```
 
-### Factory Droid CLI
+### Option 4: Factory Droid CLI
 
 ```bash
 droid mcp add zahrs-skill node C:/Users/Rekabit/zahrs-skill/src/index.js
 ```
 
-### Run Server Manually
+### Option 5: Run Server Manually
 
 ```bash
 cd C:\Users\Rekabit\zahrs-skill
+npm install
 npm start
 ```
 
+---
 
-## Tools
+## Slash Commands (22 total)
+
+### Orchestrators
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/debug` | Investigate bugs | `/debug login error` |
+| `/plan` | Create phase plans | `/plan auth-system` |
+| `/execute` | Execute plans | `/execute phase-1` |
+| `/research` | Deep research | `/research e-commerce` |
+| `/roadmap` | Create roadmap | `/roadmap my-app` |
+| `/map` | Analyze codebase | `/map tech` |
+| `/verify` | Verify phase | `/verify auth` |
+| `/verify-work` | Verify work | `/verify-work "login done"` |
+| `/check-plans` | Check plan quality | `/check-plans phase-1` |
+| `/diagnose` | Multi-issue analysis | `/diagnose UAT.md` |
+
+### Index Agents (Direct Access)
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/planner` | Direct planning | `/planner API endpoints` |
+| `/debugger` | Scientific debugging | `/debugger 500 error` |
+| `/executor` | Atomic execution | `/executor PLAN.md` |
+| `/verifier` | Verification | `/verifier auth-phase` |
+| `/mapper` | Codebase docs | `/mapper all` |
+| `/researcher` | Domain research | `/researcher payments` |
+| `/phase-research` | Phase research | `/phase-research auth` |
+| `/synthesize` | Combine research | `/synthesize files` |
+| `/roadmapper` | Detailed roadmap | `/roadmapper my-saas` |
+| `/plan-checker` | Plan verification | `/plan-checker phase-1` |
+| `/integration-check` | E2E check | `/integration-check flow` |
+
+### Meta
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/skills` | List all skills | `/skills` |
+
+---
+
+## MCP Tools (24 total)
 
 ### Orchestrator Tools (10)
 
@@ -99,28 +174,39 @@ npm start
 | `get_skill` | Baca content skill tertentu |
 | `search_skills` | Search skills by keyword |
 
-## Skills Structure
+---
+
+## Project Structure
 
 ```
-skills/
-├── custom-indo.md          # Base persona (semua index-* inherit ini)
-├── debug.md                # Orchestrator
-├── map-codebase.md         # Orchestrator
-├── plan-phase.md           # Orchestrator
-├── execute-phase.md        # Orchestrator
-├── ...
-├── index-planner-indo.md   # Role agent
-├── index-debugger-indo.md  # Role agent
-├── ...
-├── references/             # Reference docs (9 files)
-│   ├── checkpoints.md
-│   ├── tdd.md
-│   └── ...
-└── templates/              # Template files (19 files + subdirs)
-    ├── project.md
-    ├── codebase/           # 7 files
-    └── research-project/   # 5 files
+zahrs-skill/
+├── .agent/
+│   └── workflows/          # 22 slash commands
+│       ├── debug.md
+│       ├── plan.md
+│       └── ...
+├── .claude-plugin/         # Claude Plugin
+│   ├── plugin.json
+│   └── marketplace.json
+├── configs/                # Pre-made configs
+│   ├── mcp_config.json
+│   ├── antigravity_config.json
+│   └── codex_config.json
+├── skills/                 # 62 MD skill files
+│   ├── debug.md
+│   ├── plan-phase.md
+│   ├── index-planner-indo.md
+│   ├── references/         # 9 files
+│   └── templates/          # 19 files
+├── src/
+│   ├── index.js            # MCP Server
+│   └── test-tools.js
+├── install-configs.bat     # Auto-installer
+├── package.json
+└── README.md
 ```
+
+---
 
 ## ToR Protocol
 
@@ -137,16 +223,22 @@ Setiap response WAJIB dimulai dengan:
 └─ Box-and-arrow flow visualization
 ```
 
+---
+
 ## Development
 
 ```bash
 # Test tools detection
-node src/test-tools.js
+npm test
 
 # Run server
 npm start
+
+# Watch mode
+npm run dev
 ```
 
 ## License
 
 MIT
+
