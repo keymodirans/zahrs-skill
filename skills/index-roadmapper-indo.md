@@ -74,9 +74,79 @@ Untuk setiap phase, tanya: "Apa yang must BE TRUE untuk users saat phase complet
 | Standard | 5-8 | Balanced grouping |
 | Comprehensive | 8-12 | Let boundaries stand |
 
-**Good Patterns:** ✅ Foundation → Features → Enhancement, ✅ Vertical slices
-**Bad Patterns:** ❌ Horizontal layers (all DB → all API → all UI)
+**Good Patterns:** [OK] Foundation → Features → Enhancement, [OK] Vertical slices
+**Bad Patterns:** [X] Horizontal layers (all DB → all API → all UI)
 </phase_identification>
+
+<development_workflow>
+## Development Workflow (Vertical Slice Approach)
+
+**Philosophy:** Build complete vertical slices, bukan horizontal layers.
+
+### Phase 1: BRAINSTORMING
+```
+├─ Target user (siapa yang pakai)
+├─ Core problem (masalah apa yang diselesaikan)
+├─ Success criteria (gimana tau berhasil)
+└─ Scope boundaries (apa yang TIDAK included)
+```
+
+### Phase 2: ARCHITECTURE
+```
+├─ Entity Mapping (entities utama)
+├─ Atribut Mapping (properties per entity)
+├─ Relasi Mapping (relationships between entities)
+├─ Tech stack decision
+└─ Security model (auth strategy, roles)
+```
+
+### Phase 3: PER-FEATURE VERTICAL SLICE
+Untuk SETIAP feature:
+```
+1. Database schema untuk feature ini
+2. API endpoints + documentation
+3. Business logic + validation + sanitasi
+4. UI implementation
+5. Tests (unit, integration)
+6. DONE = tested & working end-to-end
+```
+
+**[OK] Vertical:** DB → API → UI → Test untuk 1 fitur, baru next fitur
+**[X] Horizontal:** Semua DB dulu → Semua API → Semua UI (risky!)
+
+### Phase 4: PRODUCTION CHECKLIST
+Sebelum deploy, verify:
+```
+├─ Error Handling
+│   ├─ Error boundaries implemented
+│   ├─ Logging strategy (what, where)
+│   ├─ User-friendly error messages
+│   └─ Graceful degradation
+│
+├─ Security
+│   ├─ Input validation + sanitasi
+│   ├─ Authentication flow working
+│   ├─ Authorization (role-based access)
+│   ├─ Rate limiting (kalau needed)
+│   └─ Secrets management (no hardcode!)
+│
+├─ Testing
+│   ├─ Unit tests (critical functions)
+│   ├─ Integration tests (API endpoints)
+│   ├─ E2E tests (critical user flows)
+│   └─ Manual smoke test
+│
+├─ Environment
+│   ├─ Environment variables configured
+│   ├─ Dev/Staging/Prod separation
+│   └─ Rollback strategy defined
+│
+└─ Monitoring (optional tapi bagus)
+    ├─ Health check endpoint
+    ├─ Error tracking (Sentry/similar)
+    └─ Basic analytics
+```
+</development_workflow>
 
 <coverage_validation>
 ## 100% Requirement Coverage (Non-Negotiable)
@@ -208,12 +278,12 @@ Resume file: {path}
 <anti_patterns>
 ## Anti-Patterns (DON'T)
 
-❌ Impose arbitrary structure (derive from requirements)
-❌ Horizontal layers (prefer vertical slices)
-❌ Skip coverage validation (100% non-negotiable)
-❌ Write vague success criteria (must be observable)
-❌ Add PM artifacts (no teams/ceremonies)
-❌ Duplicate requirements across phases
+[X] Impose arbitrary structure (derive from requirements)
+[X] Horizontal layers (prefer vertical slices)
+[X] Skip coverage validation (100% non-negotiable)
+[X] Write vague success criteria (must be observable)
+[X] Add PM artifacts (no teams/ceremonies)
+[X] Duplicate requirements across phases
 </anti_patterns>
 
 <verification_gate>
