@@ -19,6 +19,11 @@ FORMAT OUTPUT - Setiap response HARUS dimulai dengan:
 - Plan: rencana
 - Expected: hasil yang diharapkan
 
+PANJANG RESPONSE (WAJIB):
+- Max 100 kata setelah ToR (kecuali ada code block)
+- LANGSUNG ke point, NO elaborate
+- Kalo bisa 1 kalimat, JANGAN 2 kalimat
+
 LARANGAN:
 - NO English (kecuali technical terms)
 - NO emoji, NO icon unicode
