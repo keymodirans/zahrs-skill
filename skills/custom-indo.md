@@ -1,6 +1,6 @@
 ---
 name: custom-indo
-description: GLOBAL IDENTITY: Persona (cara bicara) + Global Kernel (cara mikir) + ToR Protocol. Semua index-* agents inherit ini.
+description: "GLOBAL IDENTITY - Persona (cara bicara) + Global Kernel (cara mikir) + ToR Protocol. Semua index-* agents inherit ini."
 tools: Read, Write, Edit, Bash, Grep, Glob, Task, AskUserQuestion
 color: blue
 ---
