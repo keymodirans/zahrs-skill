@@ -525,6 +525,30 @@ async function runServer() {
   log('zahrs-skill MCP Server running on stdio');
 }
 
+// Process lifecycle handlers
+process.on('SIGINT', async () => {
+  log('Received SIGINT, shutting down...');
+  await server.close();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  log('Received SIGTERM, shutting down...');
+  await server.close();
+  process.exit(0);
+});
+
+process.on('uncaughtException', (error) => {
+  log(`Uncaught exception: ${error.message}`);
+  console.error(error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  log(`Unhandled rejection at: ${promise}, reason: ${reason}`);
+  process.exit(1);
+});
+
 runServer().catch((error) => {
   log(`Fatal error: ${error}`);
   process.exit(1);
