@@ -30,6 +30,15 @@ const __dirname = path.dirname(__filename);
 const SKILLS_DIR = path.join(__dirname, '..', 'skills');
 
 // =============================================================================
+// LOGGING (stderr so it doesn't interfere with stdio transport)
+// =============================================================================
+
+function log(message) {
+  console.error(`[zahrs-skill] ${new Date().toISOString()} - ${message}`);
+}
+
+
+// =============================================================================
 // YAML FRONTMATTER PARSER
 // Jadi ini parse frontmatter dari MD files buat extract name, description, tools
 // =============================================================================
@@ -650,8 +659,9 @@ async function main() {
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
 
-    console.error(`Tool called: ${name}`);
-    console.error(`Arguments: ${JSON.stringify(args)}`);
+    log(`TOOL CALLED: ${name}`);
+    log(`ARGUMENTS: ${JSON.stringify(args)}`);
+
 
     try {
       // Handle orchestrator tools
