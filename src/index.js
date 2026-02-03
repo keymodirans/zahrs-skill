@@ -1,15 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * zahrs-skill MCP Server (McpServer Pattern)
+ * zahrs-skill MCP Server
  * 
- * Compatible with both Claude Code and Gemini/Antigravity
- * Uses the higher-level McpServer API like sequential-thinking
+ * Pattern: JSON Schema (compatible dengan SDK 1.25.3)
+ * Compatible dengan Claude Code dan Gemini Antigravity
  */
 
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { z } from 'zod';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -109,33 +112,179 @@ async function getBasePersona() {
 // SERVER SETUP
 // =============================================================================
 
-const server = new McpServer({
-  name: "zahrs-skill",
-  version: "1.0.0",
-});
+const server = new Server(
+  { name: 'zahrs-skill', version: '1.0.0' },
+  { capabilities: { tools: {} } }
+);
 
 log('Starting zahrs-skill MCP server...');
 
 // =============================================================================
-// TOOL: get_skill - Get skill content
+// LIST TOOLS HANDLER - JSON Schema format
 // =============================================================================
 
-server.registerTool(
-  "get_skill",
-  {
-    title: "Get Skill",
-    description: `Baca content dari skill file tertentu. Returns full markdown content.
-    
-IMPORTANT: Call this first dengan file_path: "custom-indo.md" untuk load persona rules.`,
-    inputSchema: {
-      file_path: z.string().describe('Path ke skill file relative ke skills folder. Contoh: custom-indo.md, debug.md, templates/project.md')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: get_skill`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  log('ListTools called');
 
-    try {
+  return {
+    tools: [
+      {
+        name: 'get_skill',
+        description: 'Baca content dari skill file tertentu. Returns full markdown content. IMPORTANT: Call this first dengan file_path: "custom-indo.md" untuk load persona rules.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            file_path: {
+              type: 'string',
+              description: 'Path ke skill file relative ke skills folder. Contoh: custom-indo.md, debug.md'
+            }
+          },
+          required: ['file_path']
+        }
+      },
+      {
+        name: 'list_skills',
+        description: 'List semua skills yang available. Returns name, file path, description.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            folder: {
+              type: 'string',
+              description: 'Optional: filter by folder (references, templates, dll)'
+            }
+          },
+          required: []
+        }
+      },
+      {
+        name: 'brainstorm',
+        description: 'Execute brainstorm workflow untuk generate ideas',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            topic: {
+              type: 'string',
+              description: 'Topic yang mau dibrainstorm'
+            }
+          },
+          required: ['topic']
+        }
+      },
+      {
+        name: 'debug',
+        description: 'Investigate bugs menggunakan scientific method',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            bug_description: {
+              type: 'string',
+              description: 'Deskripsi bug: symptoms, expected vs actual behavior, error messages'
+            }
+          },
+          required: ['bug_description']
+        }
+      },
+      {
+        name: 'plan_phase',
+        description: 'Create phase plans dengan task breakdown dan goal-backward verification',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            phase_name: {
+              type: 'string',
+              description: 'Nama phase yang mau diplan'
+            },
+            mode: {
+              type: 'string',
+              enum: ['standard', 'gaps'],
+              description: 'Mode: standard atau gaps'
+            }
+          },
+          required: ['phase_name']
+        }
+      },
+      {
+        name: 'execute_phase',
+        description: 'Execute PLAN.md secara atomik dengan per-task commits',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            phase_name: {
+              type: 'string',
+              description: 'Nama phase yang mau diexecute'
+            },
+            plan_number: {
+              type: 'number',
+              description: 'Specific plan number'
+            },
+            resume: {
+              type: 'boolean',
+              description: 'Resume dari checkpoint terakhir'
+            }
+          },
+          required: ['phase_name']
+        }
+      },
+      {
+        name: 'security_scan',
+        description: 'Scan codebase untuk security vulnerabilities',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: {
+              type: 'string',
+              description: 'Path ke folder atau file. Kosongkan untuk scan seluruh project.'
+            }
+          },
+          required: []
+        }
+      },
+      {
+        name: 'verify_phase',
+        description: 'Verify phase goal achievement melalui goal-backward analysis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            phase_name: {
+              type: 'string',
+              description: 'Phase yang mau diverify'
+            }
+          },
+          required: ['phase_name']
+        }
+      },
+      {
+        name: 'map_codebase',
+        description: 'Explore codebase dan write structured analysis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            focus_area: {
+              type: 'string',
+              enum: ['tech', 'arch', 'quality', 'concerns', 'all'],
+              description: 'Area focus'
+            }
+          },
+          required: ['focus_area']
+        }
+      }
+    ]
+  };
+});
+
+// =============================================================================
+// CALL TOOL HANDLER
+// =============================================================================
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  log(`TOOL CALLED: ${name}`);
+  log(`ARGUMENTS: ${JSON.stringify(args)}`);
+
+  try {
+    // get_skill
+    if (name === 'get_skill') {
       const content = await readSkillFile(args.file_path);
       const frontmatter = parseFrontmatter(content);
 
@@ -153,32 +302,10 @@ IMPORTANT: Call this first dengan file_path: "custom-indo.md" untuk load persona
           ].join('\n')
         }]
       };
-    } catch (error) {
-      return {
-        content: [{ type: 'text', text: `Error: ${error.message}` }],
-        isError: true
-      };
     }
-  }
-);
 
-// =============================================================================
-// TOOL: list_skills - List all available skills
-// =============================================================================
-
-server.registerTool(
-  "list_skills",
-  {
-    title: "List Skills",
-    description: "List semua skills yang available. Returns name, file path, description.",
-    inputSchema: {
-      folder: z.string().optional().describe('Optional: filter by folder (references, templates, dll)')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: list_skills`);
-
-    try {
+    // list_skills
+    if (name === 'list_skills') {
       let skills = await listSkillFiles();
 
       if (args.folder) {
@@ -193,307 +320,200 @@ server.registerTool(
           text: `# Available Skills\n\n${formatted}\n\nTotal: ${skills.length} skills`
         }]
       };
-    } catch (error) {
+    }
+
+    // brainstorm
+    if (name === 'brainstorm') {
+      const basePersona = await getBasePersona();
+      const skillContent = await readSkillFile('index-brainstormer-indo.md');
+
       return {
-        content: [{ type: 'text', text: `Error: ${error.message}` }],
-        isError: true
+        content: [{
+          type: 'text',
+          text: [
+            '# BASE PERSONA (WAJIB DIIKUTI)',
+            '',
+            basePersona,
+            '',
+            '---',
+            '',
+            '# BRAINSTORM SKILL',
+            '',
+            `**Topic:** ${args.topic}`,
+            '',
+            skillContent
+          ].join('\n')
+        }]
       };
     }
-  }
-);
 
-// =============================================================================
-// TOOL: brainstorm - Brainstorming workflow
-// =============================================================================
+    // debug
+    if (name === 'debug') {
+      const basePersona = await getBasePersona();
+      const skillContent = await readSkillFile('index-debugger-indo.md');
 
-server.registerTool(
-  "brainstorm",
-  {
-    title: "Brainstorm",
-    description: "Execute brainstorm workflow untuk generate ideas",
-    inputSchema: {
-      topic: z.string().describe('Topic yang mau dibrainstorm')
+      return {
+        content: [{
+          type: 'text',
+          text: [
+            '# BASE PERSONA (WAJIB DIIKUTI)',
+            '',
+            basePersona,
+            '',
+            '---',
+            '',
+            '# DEBUG SKILL',
+            '',
+            `**Bug:** ${args.bug_description}`,
+            '',
+            skillContent
+          ].join('\n')
+        }]
+      };
     }
-  },
-  async (args) => {
-    log(`TOOL CALLED: brainstorm`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
 
-    const basePersona = await getBasePersona();
-    const skillContent = await readSkillFile('index-brainstormer-indo.md');
+    // plan_phase
+    if (name === 'plan_phase') {
+      const basePersona = await getBasePersona();
+      const skillContent = await readSkillFile('index-planner-indo.md');
 
+      return {
+        content: [{
+          type: 'text',
+          text: [
+            '# BASE PERSONA (WAJIB DIIKUTI)',
+            '',
+            basePersona,
+            '',
+            '---',
+            '',
+            '# PLANNER SKILL',
+            '',
+            `**Phase:** ${args.phase_name}`,
+            `**Mode:** ${args.mode || 'standard'}`,
+            '',
+            skillContent
+          ].join('\n')
+        }]
+      };
+    }
+
+    // execute_phase
+    if (name === 'execute_phase') {
+      const basePersona = await getBasePersona();
+      const skillContent = await readSkillFile('index-executor-indo.md');
+
+      return {
+        content: [{
+          type: 'text',
+          text: [
+            '# BASE PERSONA (WAJIB DIIKUTI)',
+            '',
+            basePersona,
+            '',
+            '---',
+            '',
+            '# EXECUTOR SKILL',
+            '',
+            `**Phase:** ${args.phase_name}`,
+            args.plan_number ? `**Plan:** ${args.plan_number}` : '',
+            args.resume ? '**Resume:** true' : '',
+            '',
+            skillContent
+          ].join('\n')
+        }]
+      };
+    }
+
+    // security_scan
+    if (name === 'security_scan') {
+      const basePersona = await getBasePersona();
+      const skillContent = await readSkillFile('index-security-scanner-indo.md');
+
+      return {
+        content: [{
+          type: 'text',
+          text: [
+            '# BASE PERSONA (WAJIB DIIKUTI)',
+            '',
+            basePersona,
+            '',
+            '---',
+            '',
+            '# SECURITY SCANNER SKILL',
+            '',
+            args.path ? `**Target:** ${args.path}` : '**Target:** entire project',
+            '',
+            skillContent
+          ].join('\n')
+        }]
+      };
+    }
+
+    // verify_phase
+    if (name === 'verify_phase') {
+      const basePersona = await getBasePersona();
+      const skillContent = await readSkillFile('index-verifier-indo.md');
+
+      return {
+        content: [{
+          type: 'text',
+          text: [
+            '# BASE PERSONA (WAJIB DIIKUTI)',
+            '',
+            basePersona,
+            '',
+            '---',
+            '',
+            '# VERIFIER SKILL',
+            '',
+            `**Phase:** ${args.phase_name}`,
+            '',
+            skillContent
+          ].join('\n')
+        }]
+      };
+    }
+
+    // map_codebase
+    if (name === 'map_codebase') {
+      const basePersona = await getBasePersona();
+      const skillContent = await readSkillFile('index-codebase-mapper-indo.md');
+
+      return {
+        content: [{
+          type: 'text',
+          text: [
+            '# BASE PERSONA (WAJIB DIIKUTI)',
+            '',
+            basePersona,
+            '',
+            '---',
+            '',
+            '# CODEBASE MAPPER SKILL',
+            '',
+            `**Focus:** ${args.focus_area}`,
+            '',
+            skillContent
+          ].join('\n')
+        }]
+      };
+    }
+
+    // Unknown tool
     return {
-      content: [{
-        type: 'text',
-        text: [
-          '# BASE PERSONA (WAJIB DIIKUTI)',
-          '',
-          basePersona,
-          '',
-          '---',
-          '',
-          '# BRAINSTORM SKILL',
-          '',
-          `**Topic:** ${args.topic}`,
-          '',
-          skillContent
-        ].join('\n')
-      }]
+      content: [{ type: 'text', text: `Error: Unknown tool ${name}` }],
+      isError: true
+    };
+
+  } catch (error) {
+    log(`Error: ${error.message}`);
+    return {
+      content: [{ type: 'text', text: `Error: ${error.message}` }],
+      isError: true
     };
   }
-);
-
-// =============================================================================
-// TOOL: debug - Debug workflow
-// =============================================================================
-
-server.registerTool(
-  "debug",
-  {
-    title: "Debug",
-    description: "Investigate bugs menggunakan scientific method",
-    inputSchema: {
-      bug_description: z.string().describe('Deskripsi bug: symptoms, expected vs actual behavior, error messages')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: debug`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
-
-    const basePersona = await getBasePersona();
-    const skillContent = await readSkillFile('index-debugger-indo.md');
-
-    return {
-      content: [{
-        type: 'text',
-        text: [
-          '# BASE PERSONA (WAJIB DIIKUTI)',
-          '',
-          basePersona,
-          '',
-          '---',
-          '',
-          '# DEBUG SKILL',
-          '',
-          `**Bug:** ${args.bug_description}`,
-          '',
-          skillContent
-        ].join('\n')
-      }]
-    };
-  }
-);
-
-// =============================================================================
-// TOOL: plan_phase - Planning workflow
-// =============================================================================
-
-server.registerTool(
-  "plan_phase",
-  {
-    title: "Plan Phase",
-    description: "Create phase plans dengan task breakdown dan goal-backward verification",
-    inputSchema: {
-      phase_name: z.string().describe('Nama phase yang mau diplan'),
-      mode: z.enum(['standard', 'gaps']).optional().describe('Mode: standard atau gaps')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: plan_phase`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
-
-    const basePersona = await getBasePersona();
-    const skillContent = await readSkillFile('index-planner-indo.md');
-
-    return {
-      content: [{
-        type: 'text',
-        text: [
-          '# BASE PERSONA (WAJIB DIIKUTI)',
-          '',
-          basePersona,
-          '',
-          '---',
-          '',
-          '# PLANNER SKILL',
-          '',
-          `**Phase:** ${args.phase_name}`,
-          `**Mode:** ${args.mode || 'standard'}`,
-          '',
-          skillContent
-        ].join('\n')
-      }]
-    };
-  }
-);
-
-// =============================================================================
-// TOOL: execute_phase - Execution workflow  
-// =============================================================================
-
-server.registerTool(
-  "execute_phase",
-  {
-    title: "Execute Phase",
-    description: "Execute PLAN.md secara atomik dengan per-task commits",
-    inputSchema: {
-      phase_name: z.string().describe('Nama phase yang mau diexecute'),
-      plan_number: z.number().optional().describe('Specific plan number'),
-      resume: z.boolean().optional().describe('Resume dari checkpoint terakhir')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: execute_phase`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
-
-    const basePersona = await getBasePersona();
-    const skillContent = await readSkillFile('index-executor-indo.md');
-
-    return {
-      content: [{
-        type: 'text',
-        text: [
-          '# BASE PERSONA (WAJIB DIIKUTI)',
-          '',
-          basePersona,
-          '',
-          '---',
-          '',
-          '# EXECUTOR SKILL',
-          '',
-          `**Phase:** ${args.phase_name}`,
-          args.plan_number ? `**Plan:** ${args.plan_number}` : '',
-          args.resume ? '**Resume:** true' : '',
-          '',
-          skillContent
-        ].join('\n')
-      }]
-    };
-  }
-);
-
-// =============================================================================
-// TOOL: security_scan - Security scanning workflow
-// =============================================================================
-
-server.registerTool(
-  "security_scan",
-  {
-    title: "Security Scan",
-    description: "Scan codebase untuk security vulnerabilities",
-    inputSchema: {
-      path: z.string().optional().describe('Path ke folder atau file. Kosongkan untuk scan seluruh project.')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: security_scan`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
-
-    const basePersona = await getBasePersona();
-    const skillContent = await readSkillFile('index-security-scanner-indo.md');
-
-    return {
-      content: [{
-        type: 'text',
-        text: [
-          '# BASE PERSONA (WAJIB DIIKUTI)',
-          '',
-          basePersona,
-          '',
-          '---',
-          '',
-          '# SECURITY SCANNER SKILL',
-          '',
-          args.path ? `**Target:** ${args.path}` : '**Target:** entire project',
-          '',
-          skillContent
-        ].join('\n')
-      }]
-    };
-  }
-);
-
-// =============================================================================
-// TOOL: verify_phase - Verification workflow
-// =============================================================================
-
-server.registerTool(
-  "verify_phase",
-  {
-    title: "Verify Phase",
-    description: "Verify phase goal achievement melalui goal-backward analysis",
-    inputSchema: {
-      phase_name: z.string().describe('Phase yang mau diverify')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: verify_phase`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
-
-    const basePersona = await getBasePersona();
-    const skillContent = await readSkillFile('index-verifier-indo.md');
-
-    return {
-      content: [{
-        type: 'text',
-        text: [
-          '# BASE PERSONA (WAJIB DIIKUTI)',
-          '',
-          basePersona,
-          '',
-          '---',
-          '',
-          '# VERIFIER SKILL',
-          '',
-          `**Phase:** ${args.phase_name}`,
-          '',
-          skillContent
-        ].join('\n')
-      }]
-    };
-  }
-);
-
-// =============================================================================
-// TOOL: map_codebase - Codebase exploration
-// =============================================================================
-
-server.registerTool(
-  "map_codebase",
-  {
-    title: "Map Codebase",
-    description: "Explore codebase dan write structured analysis",
-    inputSchema: {
-      focus_area: z.enum(['tech', 'arch', 'quality', 'concerns', 'all']).describe('Area focus')
-    }
-  },
-  async (args) => {
-    log(`TOOL CALLED: map_codebase`);
-    log(`ARGUMENTS: ${JSON.stringify(args)}`);
-
-    const basePersona = await getBasePersona();
-    const skillContent = await readSkillFile('index-codebase-mapper-indo.md');
-
-    return {
-      content: [{
-        type: 'text',
-        text: [
-          '# BASE PERSONA (WAJIB DIIKUTI)',
-          '',
-          basePersona,
-          '',
-          '---',
-          '',
-          '# CODEBASE MAPPER SKILL',
-          '',
-          `**Focus:** ${args.focus_area}`,
-          '',
-          skillContent
-        ].join('\n')
-      }]
-    };
-  }
-);
+});
 
 // =============================================================================
 // RUN SERVER
