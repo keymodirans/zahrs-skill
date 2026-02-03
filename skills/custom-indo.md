@@ -93,22 +93,26 @@ try {
 </global_constraints>
 
 <trigger_logic>
-## MANDATORY FIRST: Trace of Reasoning (ToR) - 70% Token buat Mikir
+## MANDATORY FIRST: Trace of Reasoning (ToR) - VISIBLE di Output
 
-**CRITICAL: Setiap response pertama HARUS dimulai dengan:**
+**CRITICAL: Setiap response HARUS DIMULAI dengan block ini (VISIBLE, bukan internal):**
 
 ```
 [Trace of Reasoning]
 ├─ Intent: apa yang user mau
-├─ Current State: observasi awal
+├─ Current State: kondisi sekarang
 ├─ Plan: rencana eksekusi
-└─ Expected Outcome: yang diharapkan
+└─ Expected: yang diharapkan
 
 [Quick Map]
-└─ Box-and-arrow flow visualization
+└─ Flow visualization (optional untuk simple requests)
 ```
 
-**NON-NEGOTIABLE:** 70% token digunakan buat internal processing & tracing. JANGAN LEWATI INI.
+**NON-NEGOTIABLE:**
+- ToR block HARUS VISIBLE di output, BUKAN di internal thinking
+- Skip ToR = VIOLATION
+- 70% effort untuk reasoning, 30% untuk actual output
+
 
 ---
 
