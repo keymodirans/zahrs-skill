@@ -57,13 +57,30 @@ function parseFrontmatter(content) {
 }
 
 async function readSkillFile(relativePath) {
-  const fullPath = path.join(SKILLS_DIR, relativePath);
+  // Security: Path traversal protection
+  // Sanitize path - remove any ../ attempts
+  const safePath = path.normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/g, '');
+
+  // Resolve full path
+  const fullPath = path.resolve(SKILLS_DIR, safePath);
+
+  // Validate: must be within SKILLS_DIR
+  if (!fullPath.startsWith(path.resolve(SKILLS_DIR))) {
+    throw new Error('Security violation: path traversal detected');
+  }
+
+  // Validate: must be .md file
+  if (!fullPath.endsWith('.md')) {
+    throw new Error('Invalid file type: only .md files allowed');
+  }
+
   try {
     return await fs.readFile(fullPath, 'utf-8');
   } catch (error) {
     throw new Error(`Skill file not found: ${relativePath}`);
   }
 }
+
 
 async function listSkillFiles(dir = SKILLS_DIR, baseDir = SKILLS_DIR) {
   const skills = [];
@@ -136,7 +153,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             file_path: {
               type: 'string',
-              description: 'Path ke skill file relative ke skills folder. Contoh: custom-indo.md, debug.md'
+              description: 'Path ke skill file relative ke skills folder. Contoh: custom-indo.md, debug.md',
+              pattern: '^[a-zA-Z0-9/_-]+\\.md$'  // Security: block path traversal
             }
           },
           required: ['file_path']
