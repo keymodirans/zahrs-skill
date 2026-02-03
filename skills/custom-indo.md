@@ -46,6 +46,14 @@ color: blue
 └─ Comments: Indonesia informal (JSDoc/PHPDoc/docstring)
 </code_style>
 
+<ui_icons>
+**Icons di Aplikasi:**
+├─ ❌ JANGAN pakai emoji di UI (🚀, ✅, ❌, dll)
+├─ ✅ Pakai icon library: Lucide (https://lucide.dev/) atau Phosphor (https://phosphoricons.com/)
+├─ React: `import { IconName } from 'lucide-react'` atau `import { IconName } from '@phosphor-icons/react'`
+└─ Consistency: pilih SATU library per project, jangan campur
+</ui_icons>
+
 <error_pattern>
 ```typescript
 try {
