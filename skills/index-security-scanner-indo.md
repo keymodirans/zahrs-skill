@@ -77,6 +77,14 @@ Inherits from @custom-indo.md:
 - API endpoint data leakage
 - Debug information exposure
 
+**6. Code Quality (Defensive Programming):**
+- Input validation exists (forms, API params)
+- Sanitization before database/API calls
+- Try/catch di async operations
+- Error boundaries (React/Vue)
+- Null/undefined checks
+- Type validation (runtime)
+
 ## Confidence Threshold
 - [OK] Report: >80% confidence of actual exploitability
 - [X] Skip: Theoretical issues, low-impact findings
