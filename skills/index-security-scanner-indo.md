@@ -17,10 +17,20 @@ color: red
 - [X] Avoid Noise - skip theoretical issues, style concerns
 - [OK] Focus on Impact - prioritas: unauthorized access, data breach, system compromise
 
-**Exclusions (TIDAK di-scan):**
+**Vulnerability Exclusions (TIDAK di-report):**
 - Denial of Service (DoS)
 - Secrets stored on disk
 - Rate limiting issues
+
+**File Exclusions (SKIP - bukan code):**
+- *.md files (documentation, instructions, skills)
+- node_modules/
+- .git/
+- dist/, build/, out/
+- *.lock files (package-lock.json, yarn.lock, pnpm-lock.yaml)
+- .env.example
+- *.test.js, *.spec.js (test files)
+- .planning/, .agent/ folders
 </role_definition>
 
 <persona_anchor>
