@@ -19,32 +19,43 @@ Indonesian workflow skills untuk AI coding agents.
 
 ## Installation
 
-### Option 1: Claude Code (Slash Commands)
-
-Copy folder ke project kamu:
+### Option 1: Claude Code (Local Plugin)
 
 ```bash
-# Copy slash commands ke project
-xcopy /E /I C:\Users\Rekabit\zahrs-skill\.agent .agent
+# Clone repository
+git clone https://github.com/keymodirans/zahrs-skill.git
+cd zahrs-skill
+
+# Install as local plugin
+/plugin install ./
 ```
 
-Atau buka zahrs-skill folder langsung di Claude Code:
+**Verify installation:**
+```bash
+/help
+```
+
+Should see:
+```
+# /debug - Investigate bugs dengan scientific method
+# /plan - Create phase plans
+# /execute - Execute plans
+# /skills - List all skills
+# ... + 18 more commands
+```
+
+### Option 1b: Plugin Marketplace (Coming Soon)
+
+> ⚠️ **Note:** Marketplace registration coming soon. Use local installation above for now.
 
 ```bash
-cd C:\Users\Rekabit\zahrs-skill
-claude .
+# Register marketplace (coming soon)
+/plugin marketplace add keymodirans/zahrs-skill-marketplace
+
+# Install plugin
+/plugin install zahrs-skill@zahrs-skill-marketplace
 ```
 
-**Available commands:**
-```
-/debug <bug>           - Investigate bugs
-/plan <phase>          - Create plans
-/execute <phase>       - Execute plans
-/research <topic>      - Deep research
-/roadmap <project>     - Create roadmap
-/skills                - List all skills
-... + 16 more commands
-```
 
 ### Option 2: Claude Desktop (MCP Server)
 
