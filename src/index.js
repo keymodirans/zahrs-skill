@@ -349,7 +349,27 @@ function generateInputSchema(toolName, config) {
       },
       required: ['description']
     },
-    // Index agent direct access tools (11 agents)
+    brainstorm: {
+      type: 'object',
+      properties: {
+        topic: {
+          type: 'string',
+          description: 'Topic yang mau dibrainstorm'
+        }
+      },
+      required: ['topic']
+    },
+    // Index agent direct access tools (12 agents)
+    index_brainstormer: {
+      type: 'object',
+      properties: {
+        topic: {
+          type: 'string',
+          description: 'Topic yang mau dibrainstorm'
+        }
+      },
+      required: ['topic']
+    },
     index_planner: {
       type: 'object',
       properties: {
