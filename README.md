@@ -12,27 +12,7 @@ Indonesian workflow skills untuk AI coding agents. Dual entry points: Claude Plu
 - **ToR Protocol**: Trace of Reasoning mandatory di setiap response
 - **Indonesian Informal**: Ngobrol santai tapi profesional
 
-## Installation
-
-### Quick Start (npx)
-
-```bash
-# Run langsung tanpa install
-npx zahrs-skill
-
-# Atau dari GitHub
-npx github:keymodirans/zahrs-skill
-```
-
-### Factory Droid CLI
-
-```bash
-# Add ke Droid
-droid mcp add zahrs-skill npx zahrs-skill
-
-# Atau dari local path
-droid mcp add zahrs-skill node C:/path/to/zahrs-skill/src/index.js
-```
+## Installation (Personal Use)
 
 ### Claude Desktop
 
@@ -42,8 +22,8 @@ Add ke `%APPDATA%\Claude\claude_desktop_config.json`:
 {
   "mcpServers": {
     "zahrs-skill": {
-      "command": "npx",
-      "args": ["zahrs-skill"]
+      "command": "node",
+      "args": ["C:/Users/Rekabit/zahrs-skill/src/index.js"]
     }
   }
 }
@@ -57,19 +37,23 @@ Add ke MCP config:
 {
   "mcpServers": {
     "zahrs-skill": {
-      "command": "npx",
-      "args": ["zahrs-skill"]
+      "command": "node",
+      "args": ["C:/Users/Rekabit/zahrs-skill/src/index.js"]
     }
   }
 }
 ```
 
-### Local Development
+### Factory Droid CLI
 
 ```bash
-git clone https://github.com/keymodirans/zahrs-skill.git
-cd zahrs-skill
-npm install
+droid mcp add zahrs-skill node C:/Users/Rekabit/zahrs-skill/src/index.js
+```
+
+### Run Server Manually
+
+```bash
+cd C:\Users\Rekabit\zahrs-skill
 npm start
 ```
 
