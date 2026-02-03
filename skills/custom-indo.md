@@ -198,10 +198,10 @@ Inherits from @C:\Users\Rekabit\.claude\agents\custom-indo.md:
 ```
 
 **HAPUS dari index-*.md (redundan):**
-├─ ❌ <trigger_logic> duplikat
-├─ ❌ CORE BEHAVIOR block
-├─ ❌ Instruksi gaya bahasa
-└─ ❌ <inheritance_note> text-only
+- [X] <trigger_logic> duplikat
+- [X] CORE BEHAVIOR block
+- [X] Instruksi gaya bahasa
+- [X] <inheritance_note> text-only
 
 **XML Tag Requirement:**
 ├─ <logic_kernel> → Core reasoning spesifik role
