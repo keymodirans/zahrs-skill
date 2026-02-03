@@ -1,0 +1,20 @@
+{
+    "name": "zahrs-skill-marketplace",
+    "description": "Marketplace registry for zahrs-skill Indonesian workflow system",
+    "owner": {
+        "name": "Rekabit",
+        "email": "rekabit@example.com"
+    },
+    "plugins": [
+        {
+            "name": "zahrs-skill",
+            "description": "Indonesian workflow skills: planning, debugging, research, execution dengan ToR protocol",
+            "version": "1.0.0",
+            "source": "./",
+            "author": {
+                "name": "Rekabit",
+                "email": "rekabit@example.com"
+            }
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "name": "zahrs-skill",
+    "version": "1.0.0",
+    "description": "MCP Server + Claude Plugin: Indonesian workflow skills dengan ToR protocol",
+    "type": "module",
+    "main": "src/index.js",
+    "bin": {
+        "zahrs-skill": "src/index.js"
+    },
+    "scripts": {
+        "start": "node src/index.js",
+        "dev": "node --watch src/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/keymodirans/zahrs-skill.git"
+    },
+    "bugs": {
+        "url": "https://github.com/keymodirans/zahrs-skill/issues"
+    },
+    "homepage": "https://github.com/keymodirans/zahrs-skill#readme",
+    "keywords": [
+        "mcp",
+        "mcp-server",
+        "claude",
+        "skills",
+        "planning",
+        "debugging",
+        "workflow",
+        "indonesia"
+    ],
+    "author": "Rekabit",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.25.3"
+    }
+}

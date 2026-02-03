@@ -1,0 +1,22 @@
+{
+  "name": "zahrs-skill",
+  "description": "Indonesian workflow skills: planning, debugging, research, execution dengan ToR protocol. 13 orchestrators + meta-tools.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Rekabit",
+    "email": "rekabit@example.com"
+  },
+  "homepage": "https://github.com/rekabit/zahrs-skill",
+  "repository": "https://github.com/rekabit/zahrs-skill",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "planning",
+    "debugging",
+    "research",
+    "indonesia",
+    "workflow",
+    "tor-protocol",
+    "claude-code"
+  ]
+}

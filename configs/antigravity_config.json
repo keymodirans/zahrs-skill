@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+        "zahrs-skill": {
+            "command": "node",
+            "args": [
+                "C:/Users/Rekabit/zahrs-skill/src/index.js"
+            ]
+        }
+    }
+}
