@@ -14,36 +14,65 @@ Indonesian workflow skills untuk AI coding agents. Dual entry points: Claude Plu
 
 ## Installation
 
-### Claude Code (Plugin)
+### Quick Start (npx)
 
 ```bash
-# Via marketplace (kalau udah publish)
-claude plugin install zahrs-skill
+# Run langsung tanpa install
+npx zahrs-skill
 
-# Local development
-claude plugin install ./path/to/zahrs-skill
+# Atau dari GitHub
+npx github:keymodirans/zahrs-skill
 ```
 
-### Antigravity / Codex (MCP Server)
+### Factory Droid CLI
 
 ```bash
-cd zahrs-skill
-npm install
-npm start
+# Add ke Droid
+droid mcp add zahrs-skill npx zahrs-skill
+
+# Atau dari local path
+droid mcp add zahrs-skill node C:/path/to/zahrs-skill/src/index.js
 ```
 
-Configure di MCP settings:
+### Claude Desktop
+
+Add ke `%APPDATA%\Claude\claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "zahrs-skill": {
-      "command": "node",
-      "args": ["C:/Users/Rekabit/zahrs-skill/src/index.js"]
+      "command": "npx",
+      "args": ["zahrs-skill"]
     }
   }
 }
 ```
+
+### Antigravity / Codex
+
+Add ke MCP config:
+
+```json
+{
+  "mcpServers": {
+    "zahrs-skill": {
+      "command": "npx",
+      "args": ["zahrs-skill"]
+    }
+  }
+}
+```
+
+### Local Development
+
+```bash
+git clone https://github.com/keymodirans/zahrs-skill.git
+cd zahrs-skill
+npm install
+npm start
+```
+
 
 ## Tools
 

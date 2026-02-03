@@ -5,11 +5,20 @@
     "type": "module",
     "main": "src/index.js",
     "bin": {
-        "zahrs-skill": "src/index.js"
+        "zahrs-skill": "./src/index.js"
     },
+    "files": [
+        "src/index.js",
+        "skills/**/*.md",
+        ".claude-plugin/**",
+        "README.md",
+        "LICENSE"
+    ],
     "scripts": {
         "start": "node src/index.js",
-        "dev": "node --watch src/index.js"
+        "dev": "node --watch src/index.js",
+        "test": "node src/test-tools.js",
+        "prepublishOnly": "npm test"
     },
     "repository": {
         "type": "git",
@@ -23,11 +32,13 @@
         "mcp",
         "mcp-server",
         "claude",
+        "claude-plugin",
         "skills",
         "planning",
         "debugging",
         "workflow",
-        "indonesia"
+        "indonesia",
+        "ai-tools"
     ],
     "author": "Rekabit",
     "license": "MIT",
