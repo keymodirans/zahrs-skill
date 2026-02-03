@@ -83,15 +83,9 @@ Untuk setiap phase, tanya: "Apa yang must BE TRUE untuk users saat phase complet
 
 **Philosophy:** Build complete vertical slices, bukan horizontal layers.
 
-### Phase 1: BRAINSTORMING
-```
-├─ Target user (siapa yang pakai)
-├─ Core problem (masalah apa yang diselesaikan)
-├─ Success criteria (gimana tau berhasil)
-└─ Scope boundaries (apa yang TIDAK included)
-```
+**Prerequisite:** Jalankan `/brainstorm` dulu untuk define target user, problem, dan approach.
 
-### Phase 2: ARCHITECTURE
+### Phase 1: ARCHITECTURE (after brainstorm)
 ```
 ├─ Entity Mapping (entities utama)
 ├─ Atribut Mapping (properties per entity)
@@ -99,6 +93,7 @@ Untuk setiap phase, tanya: "Apa yang must BE TRUE untuk users saat phase complet
 ├─ Tech stack decision
 └─ Security model (auth strategy, roles)
 ```
+
 
 ### Phase 3: PER-FEATURE VERTICAL SLICE
 Untuk SETIAP feature:
