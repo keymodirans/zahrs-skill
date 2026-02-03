@@ -57,21 +57,29 @@ function parseFrontmatter(content) {
 }
 
 async function readSkillFile(relativePath) {
+  log(`readSkillFile called with: "${relativePath}" (type: ${typeof relativePath})`);
+
+  // Handle undefined/null
+  if (!relativePath || typeof relativePath !== 'string') {
+    throw new Error(`Invalid input: file_path must be a string, got ${typeof relativePath}`);
+  }
+
+  // Validate: must be .md file (check original input)
+  if (!relativePath.endsWith('.md')) {
+    throw new Error(`Invalid file type: only .md files allowed. Got: "${relativePath}"`);
+  }
+
   // Security: Path traversal protection
-  // Sanitize path - remove any ../ attempts
   const safePath = path.normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/g, '');
+  log(`Normalized path: "${safePath}"`);
 
   // Resolve full path
   const fullPath = path.resolve(SKILLS_DIR, safePath);
+  log(`Full path: "${fullPath}"`);
 
   // Validate: must be within SKILLS_DIR
   if (!fullPath.startsWith(path.resolve(SKILLS_DIR))) {
     throw new Error('Security violation: path traversal detected');
-  }
-
-  // Validate: must be .md file
-  if (!fullPath.endsWith('.md')) {
-    throw new Error('Invalid file type: only .md files allowed');
   }
 
   try {
