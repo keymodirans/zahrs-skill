@@ -359,7 +359,27 @@ function generateInputSchema(toolName, config) {
       },
       required: ['topic']
     },
-    // Index agent direct access tools (12 agents)
+    security_scan: {
+      type: 'object',
+      properties: {
+        path: {
+          type: 'string',
+          description: 'Path ke folder atau file yang mau di-scan. Kosongkan untuk scan seluruh project.'
+        }
+      },
+      required: []
+    },
+    // Index agent direct access tools (13 agents)
+    index_security_scanner: {
+      type: 'object',
+      properties: {
+        path: {
+          type: 'string',
+          description: 'Path ke folder atau file yang mau di-scan'
+        }
+      },
+      required: []
+    },
     index_brainstormer: {
       type: 'object',
       properties: {
