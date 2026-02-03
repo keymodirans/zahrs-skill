@@ -44,12 +44,10 @@ Should see:
 # ... + 18 more commands
 ```
 
-### Option 1b: Plugin Marketplace (Coming Soon)
-
-> ⚠️ **Note:** Marketplace registration coming soon. Use local installation above for now.
+### Option 1b: Plugin Marketplace
 
 ```bash
-# Register marketplace (coming soon)
+# Register marketplace
 /plugin marketplace add keymodirans/zahrs-skill-marketplace
 
 # Install plugin
