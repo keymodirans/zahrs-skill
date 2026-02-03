@@ -60,8 +60,17 @@ async function readSkillFile(relativePath) {
   log(`readSkillFile called with: "${relativePath}" (type: ${typeof relativePath})`);
 
   // Handle undefined/null
-  if (!relativePath || typeof relativePath !== 'string') {
+  if (relativePath === undefined || relativePath === null) {
+    throw new Error('Invalid input: file_path is required');
+  }
+
+  if (typeof relativePath !== 'string') {
     throw new Error(`Invalid input: file_path must be a string, got ${typeof relativePath}`);
+  }
+
+  // Handle empty string
+  if (relativePath.trim() === '') {
+    throw new Error('Invalid input: file_path cannot be empty');
   }
 
   // Validate: must be .md file (check original input)
