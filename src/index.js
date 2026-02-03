@@ -659,6 +659,27 @@ async function main() {
         const config = orchestrators.get(name);
         const content = await readSkillFile(config.file);
 
+        // Auto-inject custom-indo.md for index-* agents
+        let basePersona = '';
+        if (config.isAgent && config.file.startsWith('index-')) {
+          try {
+            const customIndoContent = await readSkillFile('custom-indo.md');
+            basePersona = [
+              '# BASE PERSONA (WAJIB DIIKUTI)',
+              '',
+              customIndoContent,
+              '',
+              '---',
+              '',
+              '# AGENT-SPECIFIC INSTRUCTIONS (Inherits above)',
+              ''
+            ].join('\n');
+          } catch (e) {
+            // custom-indo.md not found, skip injection
+            console.error('Warning: custom-indo.md not found for persona injection');
+          }
+        }
+
         // Build response dengan context
         const response = [
           `# ${config.name}`,
@@ -675,6 +696,7 @@ async function main() {
           '',
           '---',
           '',
+          basePersona,
           '## Skill Content',
           '',
           content
@@ -684,6 +706,7 @@ async function main() {
           content: [{ type: 'text', text: response }]
         };
       }
+
 
       // Handle meta-tools
       switch (name) {
